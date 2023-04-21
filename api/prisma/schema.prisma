@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model friends {
+  id             Int        @id @default(autoincrement())
+  user_id        Int
+  user_friend_id Int
+  created_at     DateTime?  @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
+  updated_at     DateTime?  @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
+  deleted_at     DateTime?  @db.Timestamp(6)
+  users          users      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_friend")
+  messages       messages[]
+}
+
+model messages {
+  id              Int       @id @default(autoincrement())
+  sender_id       Int
+  conversation_id Int
+  created_at      DateTime? @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
+  updated_at      DateTime? @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
+  deleted_at      DateTime? @db.Timestamp(6)
+  friends         friends   @relation(fields: [conversation_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_conversation")
+  users           users     @relation(fields: [sender_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_sender")
+}
+
+model users {
+  id         Int        @id @default(autoincrement())
+  name       String     @db.VarChar(80)
+  password   String     @db.VarChar(300)
+  created_at DateTime?  @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
+  updated_at DateTime?  @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
+  deleted_at DateTime?  @db.Timestamp(6)
+  friends    friends[]
+  messages   messages[]
+}
