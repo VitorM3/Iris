@@ -7,4 +7,9 @@ export default class AuthGuardDecorator {
             UseGuards(AuthGuard('local'))
         )
     }
+    public static jwt(){
+        return applyDecorators(
+            UseGuards(AuthGuard('jwt'))
+        )
+    }
 }

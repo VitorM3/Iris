@@ -13,6 +13,9 @@ export default class ControllerDecorator {
     if(dataOfDecorator.withLocalAuth){
       decorators.push(applyDecorators(AuthGuardDecorator.local()))
     }
+    if(dataOfDecorator.withAuth){
+      decorators.push(applyDecorators(AuthGuardDecorator.jwt()))
+    }
     return applyDecorators(
       Controller(dataOfDecorator.name),
       ApiTags(

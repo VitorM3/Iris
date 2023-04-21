@@ -14,7 +14,7 @@ export default class PostLoginAuthController {
     @EndpointDecorator.apply({
         endpoint: {method: EMethod.POST,  url: 'login'},
         description: "Login de usuário no sistema",
-        name: "Login",
+        name: "Login de Usuário",
         responses: [
             {
                 description: "Login efetuado com sucesso",
