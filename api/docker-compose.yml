@@ -1,0 +1,28 @@
+version: "3.2"
+services:
+  app:
+    image: node:16.14.2
+    container_name: iris-api
+    user: "root"
+    restart: always
+    working_dir: /app
+    # network_mode: "host" use em linux
+    network_mode: "host"
+    volumes:
+        - ./:/app
+    
+    depends_on:
+      - db
+    command: bash -c "npm install; npm i -g @nestjs/cli; npm run start:debug" 
+  db:
+    container_name: iris-database
+    image: postgres
+    restart: always
+    network_mode: "host"
+    shm_size: 1g
+    # ports:
+    #   - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_USER: postgres
+      POSTGRES_DB: iris
