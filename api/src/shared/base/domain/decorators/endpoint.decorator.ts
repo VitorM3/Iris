@@ -35,11 +35,17 @@ export default class EndpointDecorator {
   }
 
   private static defineResponses(responses: IDocumentationResponse[]) {
-    return responses.map((response) => {
+    const defaultResponse:IDocumentationResponse[] = [
+      {
+        description: "Ocorreu um erro na requisição devido a algum erro no banco de dados ou no servidor",
+        status: 500,
+      }
+    ]
+    return [...defaultResponse,...responses].map((response) => {
       return applyDecorators(
         ApiResponse({
           description: response.description,
-          content: response.object,
+          schema: response.object,
           status: response.status,
         }),
       );
