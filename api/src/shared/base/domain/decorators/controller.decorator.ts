@@ -1,5 +1,5 @@
 import { applyDecorators, Controller } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import IControllerDefinition from '../interface/controller-definition.interface';
 import AuthGuardDecorator from 'src/modules/Auth/domain/guard/auth.guard';
 
@@ -14,7 +14,11 @@ export default class ControllerDecorator {
       decorators.push(applyDecorators(AuthGuardDecorator.local()))
     }
     if(dataOfDecorator.withAuth){
-      decorators.push(applyDecorators(AuthGuardDecorator.jwt()))
+      decorators.push(applyDecorators(
+        AuthGuardDecorator.jwt(),
+        ApiSecurity('bearer'),
+        ApiBearerAuth()
+      ))
     }
     return applyDecorators(
       Controller(dataOfDecorator.name),

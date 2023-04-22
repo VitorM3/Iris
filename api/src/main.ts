@@ -10,6 +10,6 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe({transform: true}));
   SwaggerConfig.define(app);
   DatabaseConfig.define(app);
-  await app.listen(2000);
+  await app.listen(2001);
 }
 bootstrap();

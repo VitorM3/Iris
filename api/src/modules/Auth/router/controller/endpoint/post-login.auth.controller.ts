@@ -1,11 +1,11 @@
 import EndpointDecorator from "src/shared/base/domain/decorators/endpoint.decorator";
-import AuthControllerLogin from "../../decorator/auth-controller-without-login.auth.decorator";
+import AuthControllerLogin from "../../decorator/auth-controller.auth.decorator";
 import { EMethod } from "src/shared/base/domain/enum/method.enum";
 import ValidateUserLoginDTO from "src/modules/User/domain/dto/validate-user-login.dto";
 import AuthService from "../../../application/services/@AuthService";
 import { Body, Res } from "@nestjs/common";
 
-@AuthControllerLogin.apply()
+@AuthControllerLogin.localAuth()
 export default class PostLoginAuthController {
     public constructor(
         private readonly authService: AuthService
@@ -21,7 +21,7 @@ export default class PostLoginAuthController {
                 status: 200,
                 object: {
                     example:{
-                        token: "ETwdwqdqwdqwdqwouGT1729"
+                        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2ODIxMzU5MjcsImV4cCI6MTY4MjE1MzkyN30.TWN9QWUlrueicfh7ITXQXyWd-d-IE86kppBf0oQHkXc"
                     }
                 }
             },
@@ -31,8 +31,8 @@ export default class PostLoginAuthController {
             }
         ]
     })
-    public async login(@Body() dto: ValidateUserLoginDTO, @Res() res){
+    public async login(@Body() dto: ValidateUserLoginDTO, @Res({passthrough: true}) res){
         const id = res.user as number;
-        return this.authService.login.execute(id)
+        return await this.authService.login.execute(id)
     }
 }
