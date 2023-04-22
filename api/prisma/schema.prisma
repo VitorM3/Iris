@@ -36,6 +36,7 @@ model users {
   created_at DateTime?  @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
   updated_at DateTime?  @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
   deleted_at DateTime?  @db.Timestamp(6)
+  email      String     @unique @db.VarChar(50)
   friends    friends[]
   messages   messages[]
 }
