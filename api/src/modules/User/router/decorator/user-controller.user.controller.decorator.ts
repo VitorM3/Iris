@@ -9,4 +9,12 @@ export default class UserController {
             })
         )
     }
+    public static withLogin(){
+        return applyDecorators(
+            ControllerDecorator.apply({
+                name: "user",
+                withAuth: true,
+            })
+        )
+    }
 }

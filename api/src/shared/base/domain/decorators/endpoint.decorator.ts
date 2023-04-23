@@ -13,7 +13,7 @@ export default class EndpointDecorator {
     return applyDecorators(
       this.defineMethod(doc.endpoint),
       ApiOperation({ description: doc.description, summary: doc.name }),
-      ...this.defineResponses(doc.responses),
+      ...this.defineResponses(doc.responses, doc.withLogin),
     );
   }
 
@@ -34,13 +34,19 @@ export default class EndpointDecorator {
     }
   }
 
-  private static defineResponses(responses: IDocumentationResponse[]) {
+  private static defineResponses(responses: IDocumentationResponse[], withLogin: boolean) {
     const defaultResponse:IDocumentationResponse[] = [
       {
         description: "Ocorreu um erro na requisição devido a algum erro no banco de dados ou no servidor",
         status: 500,
       }
     ]
+    if(withLogin){
+      defaultResponse.push({
+        description: "Usuário não está autenticado",
+        status: 401
+      })
+    }
     return [...defaultResponse,...responses].map((response) => {
       return applyDecorators(
         ApiResponse({
