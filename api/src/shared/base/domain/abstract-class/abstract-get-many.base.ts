@@ -7,7 +7,10 @@ export default class AbstractGetMany {
         if(!filters.take || !filters.page || parseInt(`${filters.page}`) <= 0){
             throw new HttpException("Parâmetros de paginação não foram enviados devidamente",404)
         }
-        const {data,count} = await providerGetAll(filters)
+        const {data,count} = await providerGetAll({
+            ...filters,
+            skip: Math.round(filters.take * (filters.page ?  filters.page - 1 : 0))
+        })
         return {
             data,
             page: filters.page,

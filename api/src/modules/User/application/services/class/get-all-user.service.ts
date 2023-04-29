@@ -15,6 +15,5 @@ export default class GetAllUsersService extends ServiceAbstractBase<GetAllUsersD
             this.userProvider.get.all,
             filters
         )
-
     }
 }
