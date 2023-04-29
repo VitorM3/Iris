@@ -1,7 +1,9 @@
-import PostUserController from "./endpoint/post-user.user.controller";
+import GetUserController from "./endpoint/get.user.controller";
+import PostUserController from "./endpoint/post-without-login.user.controller";
 
 const UserControllers = [
-    PostUserController
+    PostUserController,
+    GetUserController
 ]
 
 export default UserControllers
