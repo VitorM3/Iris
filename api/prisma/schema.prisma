@@ -1,42 +1,76 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["multiSchema"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  schemas  = ["access"]
 }
 
-model friends {
-  id             Int        @id @default(autoincrement())
-  user_id        Int
-  user_friend_id Int
-  created_at     DateTime?  @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
-  updated_at     DateTime?  @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
-  deleted_at     DateTime?  @db.Timestamp(6)
-  users          users      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_friend")
-  messages       messages[]
+model role_actions {
+  id             Int            @id @default(autoincrement())
+  role_id        Int
+  action_id      Int
+  created_at     DateTime?      @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
+  updated_at     DateTime?      @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
+  deleted_at     DateTime?      @db.Timestamp(6)
+  screen_actions screen_actions @relation(fields: [action_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_action")
+  roles          roles          @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_role")
+
+  @@schema("access")
 }
 
-model messages {
-  id              Int       @id @default(autoincrement())
-  sender_id       Int
-  conversation_id Int
-  created_at      DateTime? @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
-  updated_at      DateTime? @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
-  deleted_at      DateTime? @db.Timestamp(6)
-  friends         friends   @relation(fields: [conversation_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_conversation")
-  users           users     @relation(fields: [sender_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_sender")
+model roles {
+  id           Int            @id @default(autoincrement())
+  name         String         @unique @db.VarChar(50)
+  color        String         @db.VarChar(10)
+  created_at   DateTime?      @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
+  updated_at   DateTime?      @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
+  deleted_at   DateTime?      @db.Timestamp(6)
+  role_actions role_actions[]
+  users        access_users[]
+
+  @@schema("access")
 }
 
-model users {
-  id         Int        @id @default(autoincrement())
-  name       String     @db.VarChar(80)
-  password   String     @db.VarChar(300)
-  created_at DateTime?  @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
-  updated_at DateTime?  @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
-  deleted_at DateTime?  @db.Timestamp(6)
-  email      String     @unique @db.VarChar(50)
-  friends    friends[]
-  messages   messages[]
+model screen_actions {
+  id           Int            @id @default(autoincrement())
+  screen_id    Int
+  action       String         @unique @db.VarChar(50)
+  created_at   DateTime?      @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
+  updated_at   DateTime?      @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
+  deleted_at   DateTime?      @db.Timestamp(6)
+  role_actions role_actions[]
+  screens      screens        @relation(fields: [screen_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_screen")
+
+  @@schema("access")
+}
+
+model screens {
+  id             Int              @id @default(autoincrement())
+  name           String           @unique @db.VarChar(50)
+  created_at     DateTime?        @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
+  updated_at     DateTime?        @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
+  deleted_at     DateTime?        @db.Timestamp(6)
+  screen_actions screen_actions[]
+
+  @@schema("access")
+}
+
+model access_users {
+  id         Int       @id @default(autoincrement())
+  role_id    Int
+  name       String    @db.VarChar(50)
+  cpf        String    @unique @db.Char(11)
+  email      String    @unique @db.VarChar(65)
+  password   String    @db.VarChar(300)
+  created_at DateTime? @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
+  updated_at DateTime? @default(dbgenerated("(now())::timestamp without time zone")) @db.Timestamp(6)
+  deleted_at DateTime? @db.Timestamp(6)
+  roles      roles     @relation(fields: [role_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_role")
+
+  @@map("users")
+  @@schema("access")
 }
